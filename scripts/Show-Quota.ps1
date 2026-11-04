@@ -455,7 +455,7 @@ public static class OverlayWindow {
         $timeText = if ($values) { '{0:0}%' -f $values.Time } else { '—' }
         $readout.Width = if ($showFiveHour) { 11.5 } else { 17 }
         $readout.Height = if ($showFiveHour) { 9 } else { 12.5 }
-        $label.Text = $weeklyText
+        $label.Text = $weeklyText.TrimEnd('%')
 
         if ($hover) {
             $duration = '—'
