@@ -281,6 +281,9 @@ public static class OverlayWindow {
     $hoverTextShadow.ShadowDepth = 0
     $hoverTextShadow.Opacity = 0.45
     $hoverTextShadow.Freeze()
+    $lightThemeTextShadow = $hoverTextShadow.Clone()
+    $lightThemeTextShadow.Color = [Windows.Media.Colors]::Black
+    $lightThemeTextShadow.Freeze()
     $hoverPanel = [Windows.Controls.StackPanel]::new()
     $hoverRows = @(
         for ($row = 0; $row -lt 3; $row++) {
@@ -506,7 +509,7 @@ public static class OverlayWindow {
             $hoverTextBrush = if ($state.LightTheme) { [Windows.Media.Brushes]::White } else { [Windows.Media.Brushes]::Black }
             foreach ($row in $hoverRows) {
                 $row.Text.Foreground = $hoverTextBrush
-                $row.Text.Effect = if ($state.LightTheme) { $null } else { $hoverTextShadow }
+                $row.Text.Effect = if ($state.LightTheme) { $lightThemeTextShadow } else { $hoverTextShadow }
             }
             foreach ($ring in $rings) {
                 switch ($ring.Kind) {
