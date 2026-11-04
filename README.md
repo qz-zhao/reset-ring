@@ -6,9 +6,10 @@ Reset Ring displays Codex and Claude quota and reset times. On Windows it follow
 
 ## Why Reset Ring?
 
-Ever burned through your weekly quota by Wednesday and had to wait days for it to come back? Or taken it easy all week, only to find you still had plenty left on reset day?
+Make your paid quota last through the week and put it to use before it resets. Reset Ring shows your remaining quota beside the time left in the current window, so you can decide when to pace your usage and when to tackle work you've been putting off.
 
-Reset Ring puts your quota and the time until it resets side by side. If you have 20% left and four days to go, you might save it for the work that has to get done. If you have 60% left and it resets tonight, go ahead and tackle that bigger task. You're already paying for it. You might as well use it.
+- **Running low with days to go?** Save the remaining quota for work you need to finish before the reset.
+- **Plenty left with a reset coming up?** Use the available quota on tasks you've been saving.
 
 ## Switch colors and language
 
