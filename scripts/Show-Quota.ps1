@@ -275,6 +275,12 @@ public static class OverlayWindow {
         else { [Windows.Media.Brushes]::White }
     }
 
+    $hoverTextShadow = [Windows.Media.Effects.DropShadowEffect]::new()
+    $hoverTextShadow.Color = [Windows.Media.Colors]::White
+    $hoverTextShadow.BlurRadius = 3
+    $hoverTextShadow.ShadowDepth = 0
+    $hoverTextShadow.Opacity = 0.45
+    $hoverTextShadow.Freeze()
     $hoverPanel = [Windows.Controls.StackPanel]::new()
     $hoverRows = @(
         for ($row = 0; $row -lt 3; $row++) {
@@ -498,7 +504,10 @@ public static class OverlayWindow {
             $hoverRows[1].Card.Background = $weeklyBrush
             $hoverRows[2].Card.Background = $timeBrush
             $hoverTextBrush = if ($state.LightTheme) { [Windows.Media.Brushes]::White } else { [Windows.Media.Brushes]::Black }
-            foreach ($row in $hoverRows) { $row.Text.Foreground = $hoverTextBrush }
+            foreach ($row in $hoverRows) {
+                $row.Text.Foreground = $hoverTextBrush
+                $row.Text.Effect = if ($state.LightTheme) { $null } else { $hoverTextShadow }
+            }
             foreach ($ring in $rings) {
                 switch ($ring.Kind) {
                     'FiveHour' { $radius = 17; $percent = $fiveHour; $width = 1.5; $brush = $shortBrush }
