@@ -23,7 +23,9 @@ On Windows, look near the lower-left corner of the active app window, above the 
 
 Codex Plus and accounts with an active five-hour window use three rings. Other accounts use two. Each ring has seven segments. Each segment of the weekly time ring represents one day. The center shows only the remaining weekly quota percentage.
 
-![Windows light theme. The two rings show weekly quota and time until reset, with details above the dial.](assets/windows-light-hover.png)
+| Normal display | On hover |
+| --- | --- |
+| <img src="assets/windows-light-normal.png" width="300" alt="Reset Ring at its normal size"> | <img src="assets/windows-light-hover.png" width="300" alt="Expanded Reset Ring with quota and reset details"> |
 
 ## Ask AI to install Reset Ring
 

@@ -23,7 +23,9 @@ Windows 版圆盘位于当前应用窗口左下方，在 Codex 里紧挨着侧�
 
 Codex Plus 和存在有效 5 小时额度窗口的账户显示三环，其余情况显示双环。每道环分七格，时间环每格代表一天。圆心只显示周额度剩余百分比。
 
-![Windows 浅色主题悬停示例。双环显示周额度余额和距重置的时间，圆盘上方显示详细读数。](assets/windows-light-hover.png)
+| 正常显示 | 悬停显示 |
+| --- | --- |
+| <img src="assets/windows-light-normal.png" width="300" alt="正常尺寸的 Reset Ring 圆盘"> | <img src="assets/windows-light-hover.png" width="300" alt="悬停时放大的圆盘与额度提示"> |
 
 ## 把这段话发给 AI 安装
 
