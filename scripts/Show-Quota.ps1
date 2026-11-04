@@ -277,9 +277,9 @@ public static class OverlayWindow {
 
     $hoverTextShadow = [Windows.Media.Effects.DropShadowEffect]::new()
     $hoverTextShadow.Color = [Windows.Media.Colors]::White
-    $hoverTextShadow.BlurRadius = 3
-    $hoverTextShadow.ShadowDepth = 0
-    $hoverTextShadow.Opacity = 0.45
+    $hoverTextShadow.BlurRadius = 2
+    $hoverTextShadow.ShadowDepth = 1.5
+    $hoverTextShadow.Opacity = 0.85
     $hoverTextShadow.Freeze()
     $lightThemeTextShadow = $hoverTextShadow.Clone()
     $lightThemeTextShadow.Color = [Windows.Media.Colors]::Black
