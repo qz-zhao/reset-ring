@@ -182,7 +182,7 @@ final class ResetRing: NSObject {
             lastDrawing = drawing
             let palette = palettes[paletteIndex]
             button.image = dial(colors: dark ? palette.Dark : palette.Light, dark: dark,
-                                showShort: showShort, values: values, text: text)
+                                showShort: showShort, values: values, text: text.trimmingCharacters(in: CharacterSet(charactersIn: "%")))
         }
     }
 
