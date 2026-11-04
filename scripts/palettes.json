@@ -1,0 +1,7 @@
+[
+  {"name":"Default","Dark":["#3A83F7","#35DDCC","#FF8966"],"Light":["#2563C9","#007F78","#B84D2F"]},
+  {"name":"Night Flight","Dark":["#9CA9BE","#38E8F0","#BD4271"],"Light":["#58677F","#007C88","#9B2955"]},
+  {"name":"Gemstone","Dark":["#E6CD8A","#A98AFF","#E04A77"],"Light":["#85601A","#673EBA","#B82956"],"WhiteTimeText":true},
+  {"name":"Craft","Dark":["#EEECE3","#249FD6","#B77B58"],"Light":["#626059","#006C9D","#935432"]},
+  {"name":"Sport","Dark":["#557CFA","#B5E84C","#FC668A"],"Light":["#314DC0","#527715","#BB3157"]}
+]

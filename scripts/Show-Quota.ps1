@@ -3,7 +3,12 @@ param(
     [int]$Bottom = 158,
     [switch]$Demo,
     [switch]$DemoPlus,
-    [switch]$Probe
+    [switch]$Probe,
+    [switch]$SnapshotJson,
+    [ValidateSet('Auto', 'Codex', 'Claude')]
+    [string]$Provider = 'Auto',
+    [string]$ClaudeCache = $(if ($IsMacOS) { Join-Path $HOME 'Library/Application Support/ResetRing/claude-quota.json' }
+        else { Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'ResetRing/claude-quota.json' })
 )
 
 $ErrorActionPreference = 'Stop'
@@ -43,28 +48,55 @@ function Get-CodexLocale([string]$configPath) {
     [Globalization.CultureInfo]::CurrentUICulture.Name
 }
 
+function Read-ClaudeQuota([string]$path) {
+    try {
+        $snapshot = [IO.File]::ReadAllText($path) | ConvertFrom-Json
+        if ($snapshot.provider -eq 'claude') { $snapshot }
+    } catch [IO.IOException] {
+    } catch [UnauthorizedAccessException] {
+    } catch [ArgumentException] {
+    }
+}
+
 $server = $null
 try {
     $Demo = $Demo -or $DemoPlus
-    if (!$Demo) {
-        $start = [Diagnostics.ProcessStartInfo]::new((Get-Command codex.exe).Source, 'app-server --listen stdio://')
-        $start.UseShellExecute = $false
-        $start.CreateNoWindow = $true
-        $start.RedirectStandardInput = $true
-        $start.RedirectStandardOutput = $true
-        $start.RedirectStandardError = $true
-        $server = [Diagnostics.Process]::Start($start)
-        $null = $server.StandardError.ReadToEndAsync()
-        Send-Request $server @{ id = 1; method = 'initialize'; params = @{
-            clientInfo = @{ name = 'codex-quota-overlay'; version = '0.1.0' }
-        }}
-        do {
-            $line = $server.StandardOutput.ReadLineAsync().WaitAsync([TimeSpan]::FromSeconds(15)).GetAwaiter().GetResult()
-            if (!$line) { throw 'Codex App Server exited during initialization.' }
-            $message = $line | ConvertFrom-Json
-        } until ($message.id -eq 1)
-        if ($message.error) { throw $message.error.message }
-        Send-Request $server @{ method = 'initialized' }
+    $Probe = $Probe -or $SnapshotJson
+    if (!$IsWindows -and !$Probe) { throw 'Use scripts/ResetRing.swift for the macOS menu bar.' }
+    $codexExecutable = if ($IsWindows) { 'codex.exe' } else { 'codex' }
+    $codexCommand = Get-Command $codexExecutable -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+    if (!$Demo -and $Provider -ne 'Claude' -and !$codexCommand -and ($Probe -or $Provider -eq 'Codex')) {
+        throw 'Codex CLI was not found on PATH.'
+    }
+    if (!$Demo -and $Provider -ne 'Claude' -and $codexCommand) {
+        try {
+            $start = [Diagnostics.ProcessStartInfo]::new($codexCommand.Source, 'app-server --listen stdio://')
+            $start.UseShellExecute = $false
+            $start.CreateNoWindow = $true
+            $start.RedirectStandardInput = $true
+            $start.RedirectStandardOutput = $true
+            $start.RedirectStandardError = $true
+            $server = [Diagnostics.Process]::Start($start)
+            $null = $server.StandardError.ReadToEndAsync()
+            Send-Request $server @{ id = 1; method = 'initialize'; params = @{
+                clientInfo = @{ name = 'codex-quota-overlay'; version = '0.1.0' }
+            }}
+            do {
+                $line = $server.StandardOutput.ReadLineAsync().WaitAsync([TimeSpan]::FromSeconds(15)).GetAwaiter().GetResult()
+                if (!$line) { throw 'Codex App Server exited during initialization.' }
+                $message = $line | ConvertFrom-Json
+            } until ($message.id -eq 1)
+            if ($message.error) { throw $message.error.message }
+            Send-Request $server @{ method = 'initialized' }
+        } catch {
+            if ($Probe -or $Provider -eq 'Codex') { throw }
+            if ($server) {
+                if (!$server.HasExited) { $server.Kill() }
+                $server.Dispose()
+                $server = $null
+            }
+            Write-Warning "Codex quota is unavailable. Claude support remains active."
+        }
     }
 
     $now = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
@@ -76,6 +108,11 @@ try {
         $short = @{ usedPercent = 23; windowDurationMins = 300; resetsAt = $now + 7200 }
     }
     if ($Probe) {
+        if ($Provider -eq 'Claude' -and !$Demo) {
+            $snapshot = Read-ClaudeQuota $ClaudeCache
+            $weekly = $snapshot.weekly
+            $short = $snapshot.short
+        }
         if ($server) {
             Send-Request $server @{ id = 2; method = 'account/rateLimits/read' }
             do {
@@ -89,8 +126,13 @@ try {
             $short = Get-QuotaWindow $snapshot 300
             $plan = $snapshot.planType
         }
+        if ($SnapshotJson) {
+            $source = if ($Provider -eq 'Claude') { 'claude' } else { 'codex' }
+            @{ provider = $source; plan = $plan; weekly = $weekly; short = $short } | ConvertTo-Json -Depth 4 -Compress
+            return
+        }
         $percentages = Get-Percentages $weekly ([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())
-        if (!$percentages) { throw 'No active weekly Codex quota window was returned.' }
+        if (!$percentages) { throw 'No active weekly quota window was found.' }
         $percentages | Add-Member -NotePropertyName Plan -NotePropertyValue $plan
         $percentages | Add-Member -NotePropertyName FiveHourQuota -NotePropertyValue (Get-Percentages $short $now).Quota
         $percentages
@@ -177,14 +219,7 @@ public static class OverlayWindow {
         $path.Data = $geometry
     }
 
-    # Color order is five-hour quota, weekly quota, then weekly time remaining.
-    $palettes = @(
-        @{ Dark = @('#3A83F7', '#35DDCC', '#FF8966'); Light = @('#2563C9', '#007F78', '#B84D2F') } # Blue, turquoise, grapefruit
-        @{ Dark = @('#9CA9BE', '#38E8F0', '#BD4271'); Light = @('#58677F', '#007C88', '#9B2955') } # Night flight
-        @{ Dark = @('#E6CD8A', '#A98AFF', '#E04A77'); Light = @('#85601A', '#673EBA', '#B82956'); WhiteTimeText = $true } # Gemstone
-        @{ Dark = @('#EEECE3', '#249FD6', '#B77B58'); Light = @('#626059', '#006C9D', '#935432') } # Craft
-        @{ Dark = @('#557CFA', '#B5E84C', '#FC668A'); Light = @('#314DC0', '#527715', '#BB3157') } # Sport
-    )
+    $palettes = Get-Content -Raw (Join-Path $PSScriptRoot "palettes.json") | ConvertFrom-Json
     $rings = @(
         foreach ($kind in @('FiveHour', 'Weekly', 'Time')) {
             $tracks = [Collections.Generic.List[object]]::new()
@@ -282,7 +317,8 @@ public static class OverlayWindow {
         RequestId = 1
         FreshUntil = 0
         LastForeground = [IntPtr]::Zero
-        IsCodex = $false
+        ActiveProvider = $null
+        NextClaudeRead = 0
         LightTheme = $false
     }
     $hitSurface.Add_MouseRightButtonDown({
@@ -359,9 +395,13 @@ public static class OverlayWindow {
             $state.LastForeground = $target
             $ownerId = 0
             $null = [OverlayWindow]::GetWindowThreadProcessId($target, [ref]$ownerId)
-            $state.IsCodex = (Get-Process -Id $ownerId -ErrorAction SilentlyContinue).ProcessName -in @('Codex', 'ChatGPT')
+            $processName = (Get-Process -Id $ownerId -ErrorAction SilentlyContinue).ProcessName
+            $state.ActiveProvider = switch ($processName) {
+                { $_ -in @('Codex', 'ChatGPT') -and $Provider -ne 'Claude' } { 'Codex' }
+                { $_ -eq 'Claude' -and $Provider -ne 'Codex' } { 'Claude' }
+            }
         }
-        if (!$state.IsCodex -or [OverlayWindow]::IsIconic($target)) {
+        if (!$state.ActiveProvider -or [OverlayWindow]::IsIconic($target)) {
             $popup.IsOpen = $false
             if ($window.IsVisible) { $window.Hide() }
             return
@@ -389,14 +429,27 @@ public static class OverlayWindow {
         $null = [OverlayWindow]::SetWindowPos($handle, [IntPtr](-1), $x, $y, $size, $size, 0x0010)
         if (!$window.IsVisible) { $window.Show() }
         $fresh = $Demo -or $now -lt $state.FreshUntil
-        $values = if ($fresh) { Get-Percentages $state.Weekly $now }
+        $weeklyWindow = $state.Weekly
+        $shortWindow = $state.Short
+        $plan = $state.Plan
+        if ($state.ActiveProvider -eq 'Claude' -and !$Demo) {
+            if ($now -ge $state.NextClaudeRead) {
+                $state.NextClaudeRead = $now + 1
+                $state.ClaudeSnapshot = Read-ClaudeQuota $ClaudeCache
+            }
+            $weeklyWindow = $state.ClaudeSnapshot.weekly
+            $shortWindow = $state.ClaudeSnapshot.short
+            $fresh = $null -ne $state.ClaudeSnapshot
+            $plan = $null
+        }
+        $values = if ($fresh) { Get-Percentages $weeklyWindow $now }
         # Sample the composited sidebar at its left edge, outside the overlay.
         $sampleX = $origin.X + [int](4 * $scale)
         $sampleY = $origin.Y + $rect.Bottom - [int](108 * $scale)
         $lightTheme = [OverlayWindow]::IsLightSidebar($sampleX, $sampleY, [int](19 * $scale))
         if ($null -ne $lightTheme) { $state.LightTheme = $lightTheme }
-        $showFiveHour = $state.Plan -eq 'plus' -or ($fresh -and $null -ne $state.Short)
-        $shortValues = if ($fresh -and $showFiveHour) { Get-Percentages $state.Short $now }
+        $showFiveHour = $plan -eq 'plus' -or ($fresh -and $shortWindow.resetsAt -gt $now)
+        $shortValues = if ($fresh -and $showFiveHour) { Get-Percentages $shortWindow $now }
         $fiveHour = $shortValues.Quota
         $weeklyText = if ($values) { '{0:0}%' -f $values.Quota } else { '—' }
         $timeText = if ($values) { '{0:0}%' -f $values.Time } else { '—' }
@@ -408,7 +461,7 @@ public static class OverlayWindow {
             $duration = '—'
             $resetDate = '—'
             if ($values) {
-                $remaining = [TimeSpan]::FromSeconds($state.Weekly.resetsAt - $now)
+                $remaining = [TimeSpan]::FromSeconds($weeklyWindow.resetsAt - $now)
                 $duration = if ($remaining.Days -gt 0) {
                     '{0}d {1}h' -f $remaining.Days, $remaining.Hours
                 } else {
@@ -477,3 +530,4 @@ public static class OverlayWindow {
         $server.Dispose()
     }
 }
+

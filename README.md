@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-Reset Ring is a Windows overlay for Codex. It puts a small, segmented quota gauge above the controls at the bottom of the Codex sidebar.
+Reset Ring displays Codex and Claude quota and reset times. On Windows it follows the active desktop window. On macOS it appears in the menu bar.
 
 ## What the rings show
 
@@ -12,26 +12,46 @@ Reset Ring is a Windows overlay for Codex. It puts a small, segmented quota gaug
 | Middle, or outside in two-ring mode | Remaining weekly quota |
 | Inside | Time remaining in the current weekly window |
 
-Plus uses three rings. Other plans use two unless Codex returns a five-hour quota window. Each ring has seven segments. Each segment of the weekly time ring represents one day. The center shows only the remaining weekly quota percentage.
+Codex Plus and accounts with an active five-hour window use three rings. Other accounts use two. Each ring has seven segments. Each segment of the weekly time ring represents one day. The center shows only the remaining weekly quota percentage.
 
-## Requirements
+## Run on Windows
 
-- Windows with the Codex desktop app and a signed-in ChatGPT account.
-- PowerShell 7 (`pwsh`) and a Codex CLI (`codex.exe`) available on PATH.
-
-## Run
-
-Clone or download this repository. From its root, run:
+Install PowerShell 7. For Codex, put the Codex CLI on PATH and sign in with ChatGPT. Clone or download this repository and run from its root:
 
 ```powershell
 pwsh -STA -NoProfile -File scripts/Show-Quota.ps1
 ```
 
-Keep the terminal open while using the overlay. Close it to stop the overlay.
+The overlay uses the foreground Codex or Claude desktop window. Keep the terminal open while using it. Add `-Provider Claude` or `-Provider Codex` to limit it to one app.
+
+## Run on macOS
+
+The macOS menu bar implementation is a preview. It requires macOS 12 or later, the Xcode Command Line Tools, and PowerShell 7 on PATH. For Codex, the signed-in Codex CLI must also be on PATH.
+
+```sh
+swift scripts/ResetRing.swift
+```
+
+The menu bar follows Codex or Claude when either desktop app comes forward. Choose a provider manually from the menu when using a terminal. Choose a palette or quit from the same menu. Run with `--demo` to preview a simulated Codex Plus dial. The Mac menu adapts to system appearance and uses the system's preferred language for quota labels.
+
+## Enable Claude data
+
+Claude data comes from Claude Code's [status line](https://code.claude.com/docs/en/statusline). Add the following entry to `~/.claude/settings.json` using the actual absolute script path. If you already have a status line, integrate this command into your existing handler before replacing anything.
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "pwsh -NoProfile -File \"/absolute/path/to/reset-ring/scripts/Claude-StatusLine.ps1\""
+  }
+}
+```
+
+On Windows you can use an absolute path with forward slashes, such as `C:/Tools/reset-ring/scripts/Claude-StatusLine.ps1`. Once Claude Code receives a reply with quota data, the status line updates a local cache used by the gauge. The cache holds usage percentages and reset timestamps. Claude Desktop displays the last Claude Code snapshot until the relevant window expires. The Claude Code status line also works in the terminal independently of the gauge.
 
 To use Reset Ring as a Codex skill, place this repository folder under `$CODEX_HOME/skills`, or under `~/.codex/skills` if `CODEX_HOME` is unset. Open a new Codex chat and invoke `$reset-ring`.
 
-## Controls
+## Windows controls
 
 - Hover to enlarge the ring in place and see quota details and reset times. The pointer hides over the enlarged ring.
 - Left-click to cycle through Default, Night Flight, Gemstone, Craft, and Sport. The rings and tooltip backgrounds change together. Colors adjust to the sidebar's light or dark theme and deepen as each balance falls.
@@ -47,7 +67,7 @@ pwsh -STA -NoProfile -File scripts/Show-Quota.ps1 -Left 26 -Bottom 158
 
 Use `-Probe` to check account data without opening a window. Use `-Demo` or `-DemoPlus` to test the layout with synthetic data. A dash means the relevant value is unavailable.
 
-Reset Ring reads the quota data exposed by the local Codex App Server under your current sign-in. Reset times are displayed in the Windows local time zone.
+Codex data comes from the local Codex App Server under your current sign-in. Reset times use the system time zone.
 
 ## License
 
