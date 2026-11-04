@@ -11,6 +11,29 @@ Make your paid quota last through the week and put it to use before it resets. R
 - **Running low with days to go?** Save the remaining quota for work you need to finish before the reset.
 - **Plenty left with a reset coming up?** Use the available quota on tasks you've been saving.
 
+## Where to find the dial and what the rings mean
+
+On Windows, look near the lower-left corner of the active app window, above the sidebar controls in Codex. On macOS, look in the menu bar.
+
+| Position | Readout |
+| --- | --- |
+| Outside, when shown | Remaining five-hour quota |
+| Middle, or outside in two-ring mode | Remaining weekly quota |
+| Inside | Time remaining in the current weekly window |
+
+Codex Plus and accounts with an active five-hour window use three rings. Other accounts use two. Each ring has seven segments. Each segment of the weekly time ring represents one day. The center shows only the remaining weekly quota percentage.
+
+## Ask AI to install Reset Ring
+
+Paste this into Codex or another AI assistant that can run commands on your computer.
+
+```text
+Please install Reset Ring from https://github.com/qz-zhao/reset-ring.
+Read the README, detect whether I use Windows or macOS, and follow the steps for my system.
+If I use Codex, install it as the $reset-ring skill. If I use Claude Code, connect its quota data while preserving any existing status line.
+Start the gauge and verify that it can read my quota. Tell me if I need to sign in or grant access.
+```
+
 ## Switch colors and language
 
 | Platform | Change palette | Switch Chinese / English |
@@ -29,16 +52,6 @@ Each cell lists the **dark / light** theme base colors. Two-ring mode uses the w
 | Gemstone | `#E6CD8A` / `#85601A` | `#A98AFF` / `#673EBA` | `#E04A77` / `#B82956` |
 | Craft | `#EEECE3` / `#626059` | `#249FD6` / `#006C9D` | `#B77B58` / `#935432` |
 | Sport | `#557CFA` / `#314DC0` | `#B5E84C` / `#527715` | `#FC668A` / `#BB3157` |
-
-## What the rings show
-
-| Position | Readout |
-| --- | --- |
-| Outside, when shown | Remaining five-hour quota |
-| Middle, or outside in two-ring mode | Remaining weekly quota |
-| Inside | Time remaining in the current weekly window |
-
-Codex Plus and accounts with an active five-hour window use three rings. Other accounts use two. Each ring has seven segments. Each segment of the weekly time ring represents one day. The center shows only the remaining weekly quota percentage.
 
 ## Run on Windows
 
