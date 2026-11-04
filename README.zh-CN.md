@@ -25,7 +25,7 @@ Codex Plus 和存在有效 5 小时额度窗口的账户显示三环，其余情
 
 | 正常显示 | 悬停显示 |
 | --- | --- |
-| <img src="assets/windows-light-normal.png" width="300" alt="正常尺寸的 Reset Ring 圆盘"> | <img src="assets/windows-light-hover.png" width="300" alt="悬停时放大的圆盘与额度提示"> |
+| <img src="assets/windows-light-normal.png" width="300" height="236" alt="正常尺寸的 Reset Ring 圆盘"> | <img src="assets/windows-light-hover.png" width="300" height="236" alt="悬停时放大的圆盘与额度提示"> |
 
 ## 把这段话发给 AI 安装
 

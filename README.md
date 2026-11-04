@@ -25,7 +25,7 @@ Codex Plus and accounts with an active five-hour window use three rings. Other a
 
 | Normal display | On hover |
 | --- | --- |
-| <img src="assets/windows-light-normal.png" width="300" alt="Reset Ring at its normal size"> | <img src="assets/windows-light-hover.png" width="300" alt="Expanded Reset Ring with quota and reset details"> |
+| <img src="assets/windows-light-normal.png" width="300" height="236" alt="Reset Ring at its normal size"> | <img src="assets/windows-light-hover.png" width="300" height="236" alt="Expanded Reset Ring with quota and reset details"> |
 
 ## Ask AI to install Reset Ring
 
