@@ -4,6 +4,13 @@
 
 Reset Ring displays Codex and Claude quota and reset times. On Windows it follows the active desktop window. On macOS it appears in the menu bar.
 
+## Why Reset Ring?
+
+Make your paid quota last through the week and put it to use before it resets. Reset Ring shows your remaining quota beside the time left in the current window, so you can decide when to pace your usage and when to tackle work you've been putting off.
+
+- **Running low with days to go?** Save the remaining quota for work you need to finish before the reset.
+- **Plenty left with a reset coming up?** Use the available quota on tasks you've been saving.
+
 ## Switch colors and language
 
 | Platform | Change palette | Switch Chinese / English |
