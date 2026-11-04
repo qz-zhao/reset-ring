@@ -279,7 +279,6 @@ public static class OverlayWindow {
     $hoverRows = @(
         for ($row = 0; $row -lt 3; $row++) {
             $text = [Windows.Controls.TextBlock]::new()
-            $text.Foreground = [Windows.Media.Brushes]::White
             $text.FontSize = 13
             $text.FontWeight = 'Bold'
             $card = [Windows.Controls.Border]::new()
@@ -498,6 +497,8 @@ public static class OverlayWindow {
             $hoverRows[0].Card.Background = $shortBrush
             $hoverRows[1].Card.Background = $weeklyBrush
             $hoverRows[2].Card.Background = $timeBrush
+            $hoverTextBrush = if ($state.LightTheme) { [Windows.Media.Brushes]::White } else { [Windows.Media.Brushes]::Black }
+            foreach ($row in $hoverRows) { $row.Text.Foreground = $hoverTextBrush }
             foreach ($ring in $rings) {
                 switch ($ring.Kind) {
                     'FiveHour' { $radius = 17; $percent = $fiveHour; $width = 1.5; $brush = $shortBrush }
