@@ -4,6 +4,13 @@
 
 Reset Ring displays Codex and Claude quota and reset times. On Windows it follows the active desktop window. On macOS it appears in the menu bar.
 
+## Switch colors and language
+
+| Platform | Change palette | Switch Chinese / English |
+| --- | --- | --- |
+| Windows | Left-click the ring to cycle through Default, Night Flight, Gemstone, Craft, and Sport. | Right-click the ring to switch the hover text. By default it follows the Codex interface language. If the Codex language changes again, the hover text follows that change. |
+| macOS | Click the menu bar ring and select a palette by name. | Change the system's preferred language. Quota labels use Chinese when Chinese is first in that list, and English otherwise. |
+
 ## What the rings show
 
 | Position | Readout |
