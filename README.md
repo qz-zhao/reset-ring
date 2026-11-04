@@ -18,6 +18,18 @@ Make your paid quota last through the week and put it to use before it resets. R
 | Windows | Left-click the ring to cycle through Default, Night Flight, Gemstone, Craft, and Sport. | Right-click the ring to switch the hover text. By default it follows the Codex interface language. If the Codex language changes again, the hover text follows that change. |
 | macOS | Click the menu bar ring and select a palette by name. | Change the system's preferred language. Quota labels use Chinese when Chinese is first in that list, and English otherwise. |
 
+### Five palettes
+
+Each cell lists the **dark / light** theme base colors. Two-ring mode uses the weekly quota and reset time colors. The displayed colors lighten slightly as the remaining percentage rises.
+
+| Palette | Five-hour quota | Weekly quota | Reset time |
+| --- | --- | --- | --- |
+| Default | `#3A83F7` / `#2563C9` | `#35DDCC` / `#007F78` | `#FF8966` / `#B84D2F` |
+| Night Flight | `#9CA9BE` / `#58677F` | `#38E8F0` / `#007C88` | `#BD4271` / `#9B2955` |
+| Gemstone | `#E6CD8A` / `#85601A` | `#A98AFF` / `#673EBA` | `#E04A77` / `#B82956` |
+| Craft | `#EEECE3` / `#626059` | `#249FD6` / `#006C9D` | `#B77B58` / `#935432` |
+| Sport | `#557CFA` / `#314DC0` | `#B5E84C` / `#527715` | `#FC668A` / `#BB3157` |
+
 ## What the rings show
 
 | Position | Readout |
