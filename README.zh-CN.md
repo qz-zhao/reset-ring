@@ -34,7 +34,7 @@ Codex Plus 和存在有效 5 小时额度窗口的账户显示三环，其余情
 ```text
 请帮我从 https://github.com/qz-zhao/reset-ring 安装 Reset Ring。
 先读中文 README，识别我用的是 Windows 还是 macOS，按对应步骤检查依赖并安装。
-请安装成 ChatGPT Codex 的 $reset-ring skill。
+请安装成 ChatGPT Codex 的 $reset-ring skill。Windows 下请同时运行 Set-AppShortcut.ps1，设置桌面 ChatGPT 快捷方式，让打开 GPT 时圆盘一起启动。
 启动圆盘并检查能否读取我的额度。如果需要我登录或授权，请告诉我具体在哪一步操作。
 ```
 
@@ -98,4 +98,3 @@ Codex 额度通过本机 Codex App Server 读取，重置时刻按系统时区�
 ## 许可证
 
 [MIT](LICENSE)
-
