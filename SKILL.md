@@ -16,4 +16,8 @@ Use `-Left` and `-Bottom` to adjust the center of the overlay relative to the Co
 The script uses Codex App Server with the current Codex sign-in. It selects the 10,080-minute window in the Codex bucket. If the account omits that window, report that weekly data is unavailable.
 On macOS, run `swift scripts/ResetRing.swift` from the skill directory. The preview displays ChatGPT Codex quota in the macOS menu bar.
 
-On Windows, run scripts/Set-AppShortcut.ps1 to create a desktop shortcut that opens ChatGPT first and starts Reset Ring in the background. It removes the old login watcher. Use -Remove to delete the generated shortcut.
+## Install on Windows
+
+When asked to install Reset Ring on Windows, place the skill in its final location and run `pwsh -NoProfile -File scripts/Set-AppShortcut.ps1` unless the user opts out of shortcut integration. Run this in the signed-in user's desktop session. Verify that the desktop ChatGPT shortcut points to ResetRing.Launcher.exe. Tell the user to launch ChatGPT from this shortcut. It opens the app first and starts the gauge in the background.
+
+Downloading the files alone does not configure the shortcut. Start Menu and pinned taskbar shortcuts have their own launch behavior. Use `-Remove` to remove the generated shortcut. Re-run the installer after updates.
