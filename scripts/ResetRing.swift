@@ -25,11 +25,6 @@ struct Palette: Decodable {
     let Light: [String]
 }
 
-enum Provider: String, CaseIterable {
-    case codex = "Codex"
-    case claude = "Claude"
-}
-
 final class ResetRing: NSObject {
     private let scripts: URL
     private let palettes: [Palette]
@@ -37,10 +32,6 @@ final class ResetRing: NSObject {
     private let item = NSStatusBar.system.statusItem(withLength: 28)
     private let menu = NSMenu()
     private let details = NSMenuItem(title: "", action: nil, keyEquivalent: "")
-    private let claudeCache = FileManager.default.homeDirectoryForCurrentUser
-        .appendingPathComponent("Library/Application Support/ResetRing/claude-quota.json")
-    private var provider: Provider = .codex
-    private var pinned: Provider?
     private var paletteIndex = 0
     private var codexSnapshot: Snapshot?
     private var codexUpdatedAt = Date.distantPast
@@ -54,11 +45,6 @@ final class ResetRing: NSObject {
         self.demo = demo
         super.init()
         menu.addItem(details)
-        menu.addItem(.separator())
-        addItem("Follow active app", #selector(selectProvider(_:)), tag: 0)
-        for (index, value) in Provider.allCases.enumerated() {
-            addItem(value.rawValue, #selector(selectProvider(_:)), tag: index + 1)
-        }
         menu.addItem(.separator())
         for (index, palette) in palettes.enumerated() {
             addItem(palette.name, #selector(selectPalette(_:)), tag: index)
@@ -75,11 +61,6 @@ final class ResetRing: NSObject {
         entry.target = self
         entry.tag = tag
         menu.addItem(entry)
-    }
-
-    @objc private func selectProvider(_ sender: NSMenuItem) {
-        pinned = sender.tag == 0 ? nil : Provider.allCases[sender.tag - 1]
-        update()
     }
 
     @objc private func selectPalette(_ sender: NSMenuItem) {
@@ -101,7 +82,7 @@ final class ResetRing: NSObject {
             let process = Process()
             let pipe = Pipe()
             process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
-            process.arguments = ["pwsh", "-NoProfile", "-File", script, "-Provider", "Codex", "-SnapshotJson"]
+            process.arguments = ["pwsh", "-NoProfile", "-File", script, "-SnapshotJson"]
             if useDemo { process.arguments?.append("-DemoPlus") }
             process.standardOutput = pipe
             process.standardError = FileHandle.nullDevice
@@ -133,27 +114,8 @@ final class ResetRing: NSObject {
     }
 
     private func update() {
-        if let pinned = pinned {
-            provider = pinned
-        } else if let active = NSWorkspace.shared.frontmostApplication {
-            let name = (active.localizedName ?? "").lowercased()
-            let bundle = (active.bundleIdentifier ?? "").lowercased()
-            if name == "claude" || bundle.hasPrefix("com.anthropic.claude") {
-                provider = .claude
-            } else if ["codex", "chatgpt"].contains(name) || bundle.hasPrefix("com.openai.codex") {
-                provider = .codex
-            }
-        }
-
-        let snapshot: Snapshot?
-        if provider == .codex {
-            refreshCodex()
-            snapshot = Date().timeIntervalSince(codexUpdatedAt) < 120 ? codexSnapshot : nil
-        } else if let data = try? Data(contentsOf: claudeCache) {
-            snapshot = try? JSONDecoder().decode(Snapshot.self, from: data)
-        } else {
-            snapshot = nil
-        }
+        refreshCodex()
+        let snapshot = Date().timeIntervalSince(codexUpdatedAt) < 120 ? codexSnapshot : nil
         let weekly = snapshot?.weekly.flatMap { $0.isActive ? $0 : nil }
         let short = snapshot?.short.flatMap { $0.isActive ? $0 : nil }
         let showShort = short != nil || snapshot?.plan == "plus"
@@ -164,7 +126,7 @@ final class ResetRing: NSObject {
         let chinese = Locale.preferredLanguages.first?.lowercased().hasPrefix("zh") == true
         let weeklyLabel = chinese ? "周额度剩余" : "Weekly Left"
         let timeLabel = chinese ? "重置倒计时" : "Time Left"
-        var lines = [provider.rawValue]
+        var lines = ["Codex"]
         if showShort {
             lines.append(chinese ? "5h额度剩余 \(shortText)" : "5h-use Left \(shortText)")
         }

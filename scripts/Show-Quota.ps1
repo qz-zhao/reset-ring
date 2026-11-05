@@ -4,11 +4,7 @@ param(
     [switch]$Demo,
     [switch]$DemoPlus,
     [switch]$Probe,
-    [switch]$SnapshotJson,
-    [ValidateSet('Auto', 'Codex', 'Claude')]
-    [string]$Provider = 'Auto',
-    [string]$ClaudeCache = $(if ($IsMacOS) { Join-Path $HOME 'Library/Application Support/ResetRing/claude-quota.json' }
-        else { Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'ResetRing/claude-quota.json' })
+    [switch]$SnapshotJson
 )
 
 $ErrorActionPreference = 'Stop'
@@ -48,16 +44,6 @@ function Get-CodexLocale([string]$configPath) {
     [Globalization.CultureInfo]::CurrentUICulture.Name
 }
 
-function Read-ClaudeQuota([string]$path) {
-    try {
-        $snapshot = [IO.File]::ReadAllText($path) | ConvertFrom-Json
-        if ($snapshot.provider -eq 'claude') { $snapshot }
-    } catch [IO.IOException] {
-    } catch [UnauthorizedAccessException] {
-    } catch [ArgumentException] {
-    }
-}
-
 $server = $null
 try {
     $Demo = $Demo -or $DemoPlus
@@ -65,10 +51,10 @@ try {
     if (!$IsWindows -and !$Probe) { throw 'Use scripts/ResetRing.swift for the macOS menu bar.' }
     $codexExecutable = if ($IsWindows) { 'codex.exe' } else { 'codex' }
     $codexCommand = Get-Command $codexExecutable -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
-    if (!$Demo -and $Provider -ne 'Claude' -and !$codexCommand -and ($Probe -or $Provider -eq 'Codex')) {
+    if (!$Demo -and !$codexCommand) {
         throw 'Codex CLI was not found on PATH.'
     }
-    if (!$Demo -and $Provider -ne 'Claude' -and $codexCommand) {
+    if (!$Demo -and $codexCommand) {
         try {
             $start = [Diagnostics.ProcessStartInfo]::new($codexCommand.Source, 'app-server --listen stdio://')
             $start.UseShellExecute = $false
@@ -89,13 +75,7 @@ try {
             if ($message.error) { throw $message.error.message }
             Send-Request $server @{ method = 'initialized' }
         } catch {
-            if ($Probe -or $Provider -eq 'Codex') { throw }
-            if ($server) {
-                if (!$server.HasExited) { $server.Kill() }
-                $server.Dispose()
-                $server = $null
-            }
-            Write-Warning "Codex quota is unavailable. Claude support remains active."
+            throw
         }
     }
 
@@ -108,11 +88,6 @@ try {
         $short = @{ usedPercent = 23; windowDurationMins = 300; resetsAt = $now + 7200 }
     }
     if ($Probe) {
-        if ($Provider -eq 'Claude' -and !$Demo) {
-            $snapshot = Read-ClaudeQuota $ClaudeCache
-            $weekly = $snapshot.weekly
-            $short = $snapshot.short
-        }
         if ($server) {
             Send-Request $server @{ id = 2; method = 'account/rateLimits/read' }
             do {
@@ -127,7 +102,7 @@ try {
             $plan = $snapshot.planType
         }
         if ($SnapshotJson) {
-            $source = if ($Provider -eq 'Claude') { 'claude' } else { 'codex' }
+            $source = 'codex'
             @{ provider = $source; plan = $plan; weekly = $weekly; short = $short } | ConvertTo-Json -Depth 4 -Compress
             return
         }
@@ -318,7 +293,6 @@ public static class OverlayWindow {
         FreshUntil = 0
         LastForeground = [IntPtr]::Zero
         ActiveProvider = $null
-        NextClaudeRead = 0
         LightTheme = $false
     }
     $hitSurface.Add_MouseRightButtonDown({
@@ -396,10 +370,7 @@ public static class OverlayWindow {
             $ownerId = 0
             $null = [OverlayWindow]::GetWindowThreadProcessId($target, [ref]$ownerId)
             $processName = (Get-Process -Id $ownerId -ErrorAction SilentlyContinue).ProcessName
-            $state.ActiveProvider = switch ($processName) {
-                { $_ -in @('Codex', 'ChatGPT') -and $Provider -ne 'Claude' } { 'Codex' }
-                { $_ -eq 'Claude' -and $Provider -ne 'Codex' } { 'Claude' }
-            }
+            $state.ActiveProvider = $processName -in @('Codex', 'ChatGPT')
         }
         if (!$state.ActiveProvider -or [OverlayWindow]::IsIconic($target)) {
             $popup.IsOpen = $false
@@ -432,16 +403,6 @@ public static class OverlayWindow {
         $weeklyWindow = $state.Weekly
         $shortWindow = $state.Short
         $plan = $state.Plan
-        if ($state.ActiveProvider -eq 'Claude' -and !$Demo) {
-            if ($now -ge $state.NextClaudeRead) {
-                $state.NextClaudeRead = $now + 1
-                $state.ClaudeSnapshot = Read-ClaudeQuota $ClaudeCache
-            }
-            $weeklyWindow = $state.ClaudeSnapshot.weekly
-            $shortWindow = $state.ClaudeSnapshot.short
-            $fresh = $null -ne $state.ClaudeSnapshot
-            $plan = $null
-        }
         $values = if ($fresh) { Get-Percentages $weeklyWindow $now }
         # Sample the composited sidebar at its left edge, outside the overlay.
         $sampleX = $origin.X + [int](4 * $scale)

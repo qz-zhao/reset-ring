@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Reset Ring 显示 Codex 和 Claude 的额度与重置时间。Windows 版贴在当前应用窗口上，macOS 版显示在菜单栏。
+Reset Ring 显示 ChatGPT Codex 的额度与重置时间。Windows 版贴在当前应用窗口上，macOS 版显示在菜单栏。
 
 ## 为什么做 Reset Ring
 
@@ -34,7 +34,7 @@ Codex Plus 和存在有效 5 小时额度窗口的账户显示三环，其余情
 ```text
 请帮我从 https://github.com/qz-zhao/reset-ring 安装 Reset Ring。
 先读中文 README，识别我用的是 Windows 还是 macOS，按对应步骤检查依赖并安装。
-如果我用 Codex，请装成 $reset-ring skill。如果我用 Claude Code，请接入额度数据，并保留已有的状态栏功能。
+请安装成 ChatGPT Codex 的 $reset-ring skill。
 启动圆盘并检查能否读取我的额度。如果需要我登录或授权，请告诉我具体在哪一步操作。
 ```
 
@@ -53,7 +53,7 @@ Codex Plus 和存在有效 5 小时额度窗口的账户显示三环，其余情
 pwsh -STA -NoProfile -File scripts/Show-Quota.ps1
 ```
 
-浮层跟随前台的 Codex 或 Claude 桌面窗口。使用时保持终端运行。用 `-Provider Claude` 或 `-Provider Codex` 可以限定为单一应用。
+浮层跟随前台的 ChatGPT Codex 桌面窗口。使用时保持终端运行。
 
 ## macOS 启动
 
@@ -63,22 +63,7 @@ macOS 菜单栏版目前是预览。需要 macOS 12 或更高版本、Xcode 命�
 swift scripts/ResetRing.swift
 ```
 
-切到 Codex 或 Claude 桌面应用时，菜单栏仪表自动切换。使用终端时可以从菜单手动选定数据源，菜单里也能换配色和退出。加 `--demo` 可查看模拟 Plus 三环。菜单栏配色适配系统明暗外观，额度提示跟随系统首选语言。
-
-## 接入 Claude
-
-Claude 使用 Claude Code 官方的 [状态栏](https://code.claude.com/docs/en/statusline) 数据。将以下配置合并到 `~/.claude/settings.json`，把路径替换为脚本的绝对路径。如果已有状态栏，先把命令整合到现有脚本里。
-
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "pwsh -NoProfile -File \"/absolute/path/to/reset-ring/scripts/Claude-StatusLine.ps1\""
-  }
-}
-```
-
-Windows 也可使用正斜线，例如 `C:/Tools/reset-ring/scripts/Claude-StatusLine.ps1`。Claude Code 收到包含额度的回复后，会把用量百分比和重置时间写到本机缓存。Claude 桌面浮层读取最近一次缓存，额度窗口过期后停止显示该读数。终端里也可直接通过 Claude Code 状态栏查看。
+菜单栏仪表显示 ChatGPT Codex 的额度，可在菜单里换配色和退出。加 `--demo` 可查看模拟 Plus 三环。菜单栏配色适配系统明暗外观，额度提示跟随系统首选语言。
 
 如果想作为 Codex skill 使用，把仓库文件夹放到 `$CODEX_HOME/skills` 下。若未设置 `CODEX_HOME`，则放到 `~/.codex/skills`。打开新的 Codex 聊天并调用 `$reset-ring`。
 

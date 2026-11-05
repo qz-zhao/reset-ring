@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-Reset Ring displays Codex and Claude quota and reset times. On Windows it follows the active desktop window. On macOS it appears in the menu bar.
+Reset Ring displays ChatGPT Codex quota and reset times. On Windows it follows the active desktop window. On macOS it appears in the menu bar.
 
 ## Why Reset Ring?
 
@@ -34,7 +34,7 @@ Paste this into Codex or another AI assistant that can run commands on your comp
 ```text
 Please install Reset Ring from https://github.com/qz-zhao/reset-ring.
 Read the README, detect whether I use Windows or macOS, and follow the steps for my system.
-If I use Codex, install it as the $reset-ring skill. If I use Claude Code, connect its quota data while preserving any existing status line.
+Install it as the $reset-ring skill for ChatGPT Codex.
 Start the gauge and verify that it can read my quota. Tell me if I need to sign in or grant access.
 ```
 
@@ -53,7 +53,7 @@ Install PowerShell 7. For Codex, put the Codex CLI on PATH and sign in with Chat
 pwsh -STA -NoProfile -File scripts/Show-Quota.ps1
 ```
 
-The overlay uses the foreground Codex or Claude desktop window. Keep the terminal open while using it. Add `-Provider Claude` or `-Provider Codex` to limit it to one app.
+The overlay follows the foreground ChatGPT Codex desktop window. Keep the terminal open while using it.
 
 ## Run on macOS
 
@@ -63,22 +63,7 @@ The macOS menu bar implementation is a preview. It requires macOS 12 or later, t
 swift scripts/ResetRing.swift
 ```
 
-The menu bar follows Codex or Claude when either desktop app comes forward. Choose a provider manually from the menu when using a terminal. Choose a palette or quit from the same menu. Run with `--demo` to preview a simulated Codex Plus dial. The Mac menu adapts to system appearance and uses the system's preferred language for quota labels.
-
-## Enable Claude data
-
-Claude data comes from Claude Code's [status line](https://code.claude.com/docs/en/statusline). Add the following entry to `~/.claude/settings.json` using the actual absolute script path. If you already have a status line, integrate this command into your existing handler before replacing anything.
-
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "pwsh -NoProfile -File \"/absolute/path/to/reset-ring/scripts/Claude-StatusLine.ps1\""
-  }
-}
-```
-
-On Windows you can use an absolute path with forward slashes, such as `C:/Tools/reset-ring/scripts/Claude-StatusLine.ps1`. Once Claude Code receives a reply with quota data, the status line updates a local cache used by the gauge. The cache holds usage percentages and reset timestamps. Claude Desktop displays the last Claude Code snapshot until the relevant window expires. The Claude Code status line also works in the terminal independently of the gauge.
+The menu bar displays your ChatGPT Codex quota. Choose a palette or quit from the same menu. Run with `--demo` to preview a simulated Codex Plus dial. The Mac menu adapts to system appearance and uses the system's preferred language for quota labels.
 
 To use Reset Ring as a Codex skill, place this repository folder under `$CODEX_HOME/skills`, or under `~/.codex/skills` if `CODEX_HOME` is unset. Open a new Codex chat and invoke `$reset-ring`.
 
