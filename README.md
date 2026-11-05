@@ -45,6 +45,18 @@ Start the gauge and verify that it can read my quota. Tell me if I need to sign 
 | Windows | Left-click the ring to cycle through Default, Night Flight, Gemstone, Craft, and Sport. | Right-click the ring to switch the hover text. By default it follows the Codex interface language. If the Codex language changes again, the hover text follows that change. |
 | macOS | Click the menu bar ring and select a palette by name. | Change the system's preferred language. Quota labels use Chinese when Chinese is first in that list, and English otherwise. |
 
+## Start automatically
+
+Run the following once. Reset Ring will wait in the background after you sign in, start within five seconds of opening Codex or ChatGPT desktop, and stop the gauge when the desktop app exits. Re-run the installer after updating Reset Ring to refresh the installed files.
+
+```powershell
+
+pwsh -NoProfile -File scripts/Set-AutoStart.ps1
+
+```
+
+To disable automatic startup, run the same command with `-Remove`.
+
 ## Run on Windows
 
 Install PowerShell 7. For Codex, put the Codex CLI on PATH and sign in with ChatGPT. Clone or download this repository and run from its root:

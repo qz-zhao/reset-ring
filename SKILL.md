@@ -15,3 +15,5 @@ Use `-Left` and `-Bottom` to adjust the center of the overlay relative to the Co
 
 The script uses Codex App Server with the current Codex sign-in. It selects the 10,080-minute window in the Codex bucket. If the account omits that window, report that weekly data is unavailable.
 On macOS, run `swift scripts/ResetRing.swift` from the skill directory. The preview displays ChatGPT Codex quota in the macOS menu bar.
+
+To enable automatic launch with Codex or ChatGPT desktop, run scripts/Set-AutoStart.ps1 using PowerShell 7. It installs the scripts in the current user's application data and registers a login watcher. To disable it, run the same script with -Remove. Re-run the installer after updating the skill.

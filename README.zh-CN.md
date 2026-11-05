@@ -45,6 +45,18 @@ Codex Plus 和存在有效 5 小时额度窗口的账户显示三环，其余情
 | Windows | 左键点击圆盘，依次切换默认、夜航、宝石、工艺、运动五套配色。 | 右键点击圆盘，切换悬停提示的中英文。默认跟随 Codex 界面语言，Codex 再次切换语言时自动同步。 |
 | macOS | 点击菜单栏圆盘，在菜单里选择配色。 | 修改 macOS 的首选语言。中文排在首位时，额度提示显示中文，其余情况显示英文。 |
 
+## 随桌面应用自动启动
+
+运行一次下面的命令。之后登录电脑时，Reset Ring 会在后台待命，打开 Codex 或 ChatGPT 桌面应用后约五秒内自动启动圆盘，退出应用后停止圆盘。更新 Reset Ring 后，重新运行安装命令即可更新已安装的文件。
+
+```powershell
+
+pwsh -NoProfile -File scripts/Set-AutoStart.ps1
+
+```
+
+取消自动启动时，在同一命令后加上 `-Remove`。
+
 ## Windows 启动
 
 安装 PowerShell 7。使用 Codex 时，还需将已登录 ChatGPT 的 Codex CLI 加入系统路径。克隆或下载本仓库，在仓库目录运行：
