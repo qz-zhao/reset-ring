@@ -18,8 +18,8 @@ function Get-QuotaWindow($snapshot, [int]$minutes) {
 function Get-Percentages($weekly, [long]$now) {
     if (!$weekly -or $weekly.resetsAt -le $now) { return }
     [pscustomobject]@{
-        Quota = [Math]::Clamp(100.0 - $weekly.usedPercent, 0, 100)
-        Time = [Math]::Clamp(100.0 * ($weekly.resetsAt - $now) / (60 * $weekly.windowDurationMins), 0, 100)
+        Quota = [Math]::Clamp(100.0 - $weekly.usedPercent, 0.0, 100.0)
+        Time = [Math]::Clamp(100.0 * ($weekly.resetsAt - $now) / (60 * $weekly.windowDurationMins), 0.0, 100.0)
         ResetsAt = [DateTimeOffset]::FromUnixTimeSeconds($weekly.resetsAt).LocalDateTime
     }
 }
@@ -240,7 +240,7 @@ public static class OverlayWindow {
     $null = $grid.Children.Add($readout)
     function Get-RemainingBrush([string]$hex, [double]$percent) {
         $color = [Windows.Media.ColorConverter]::ConvertFromString($hex)
-        $tint = 0.14 * [Math]::Clamp($percent, 0, 100) / 100
+        $tint = 0.14 * [Math]::Clamp($percent, 0.0, 100.0) / 100
         $red = [byte]($color.R + (255 - $color.R) * $tint)
         $green = [byte]($color.G + (255 - $color.G) * $tint)
         $blue = [byte]($color.B + (255 - $color.B) * $tint)
@@ -484,7 +484,7 @@ public static class OverlayWindow {
                     $track.Stroke = $trackBrush
                     $segment.Stroke = $brush
                     $trackFill = if ($ring.Kind -eq 'FiveHour' -and !$showFiveHour) { 0 } else { 1 }
-                    $fill = [Math]::Clamp(7 * [double]$percent / 100 - $day, 0, 1)
+                    $fill = [Math]::Clamp(7 * [double]$percent / 100 - $day, 0.0, 1.0)
                     Set-Segment $track $radius $day $trackFill
                     Set-Segment $segment $radius $day $fill
                 }
