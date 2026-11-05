@@ -18,6 +18,4 @@ On macOS, run `swift scripts/ResetRing.swift` from the skill directory. The prev
 
 ## Install on Windows
 
-When asked to install Reset Ring on Windows, place the skill in its final location and run `pwsh -NoProfile -File scripts/Set-AppShortcut.ps1` unless the user opts out of shortcut integration. Run this in the signed-in user's desktop session. Verify that the desktop ChatGPT shortcut points to ResetRing.Launcher.exe. Tell the user to launch ChatGPT from this shortcut. It opens the app first and starts the gauge in the background.
-
-Downloading the files alone does not configure the shortcut. Start Menu and pinned taskbar shortcuts have their own launch behavior. Use `-Remove` to remove the generated shortcut. Re-run the installer after updates.
+When asked to install Reset Ring on Windows, run `pwsh -NoProfile -File scripts/Set-AutoStart.ps1` after placing the skill in its final location, unless the user opts out. A login watcher starts the gauge when ChatGPT or Codex desktop opens, regardless of which shortcut was used. It stops the gauge when the desktop app exits. Verify that the watcher starts a gauge process. Use `-Remove` to disable automatic startup. Re-run the installer after updates.

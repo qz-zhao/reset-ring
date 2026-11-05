@@ -34,7 +34,7 @@ Paste this into Codex or another AI assistant that can run commands on your comp
 ```text
 Please install Reset Ring from https://github.com/qz-zhao/reset-ring.
 Read the README, detect whether I use Windows or macOS, and follow the steps for my system.
-Install it as the $reset-ring skill for ChatGPT Codex. On Windows, also run Set-AppShortcut.ps1 so the desktop ChatGPT shortcut starts the gauge with the app.
+Install it as the $reset-ring skill for ChatGPT Codex. On Windows, also run Set-AutoStart.ps1 to start a login watcher that launches the gauge when ChatGPT opens.
 Start the gauge and verify that it can read my quota. Tell me if I need to sign in or grant access.
 ```
 
@@ -47,13 +47,13 @@ Start the gauge and verify that it can read my quota. Tell me if I need to sign 
 
 ## Start automatically
 
-On Windows, create a desktop shortcut that opens ChatGPT first, then starts Reset Ring in the background. The launcher exits immediately. Re-run this installer after updating Reset Ring. Use the generated **ChatGPT** shortcut.
+Run this once to enable the login watcher. Opening ChatGPT or Codex from the desktop, taskbar, or Start menu starts the gauge within about five seconds. The gauge stops when the app exits.
 
 ```powershell
-
-pwsh -NoProfile -File scripts/Set-AppShortcut.ps1
-
+pwsh -NoProfile -File scripts/Set-AutoStart.ps1
 ```
+
+To disable it, add `-Remove`. Run the installer again after updates.
 
 ## Run on Windows
 

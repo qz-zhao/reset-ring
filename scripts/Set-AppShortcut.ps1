@@ -7,10 +7,12 @@ $ErrorActionPreference = 'Stop'
 if (!$IsWindows) { throw 'This shortcut installer supports Windows.' }
 $directory = Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'ResetRing'
 $startup = Join-Path ([Environment]::GetFolderPath('Startup')) 'Reset Ring.lnk'
+$menuShortcut = Join-Path ([Environment]::GetFolderPath('Programs')) 'Reset Ring/ChatGPT.lnk'
 [IO.File]::Delete((Join-Path $directory 'autostart.enabled'))
 [IO.File]::Delete($startup)
 if ($Remove) {
     [IO.File]::Delete($ShortcutPath)
+    [IO.File]::Delete($menuShortcut)
     'Reset Ring app shortcut removed.'
     return
 }
@@ -49,6 +51,9 @@ if ($app) {
     if ($icon) { $link.IconLocation = $icon.FullName + ',0' }
 }
 $link.Save()
+$null = [IO.Directory]::CreateDirectory((Split-Path $menuShortcut))
+Copy-Item -LiteralPath $ShortcutPath -Destination $menuShortcut -Force
 $ShortcutPath
+$menuShortcut
 
 
