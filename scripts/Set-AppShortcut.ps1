@@ -1,6 +1,6 @@
 param(
     [string]$ShortcutPath = (Join-Path ([Environment]::GetFolderPath('Desktop')) 'ChatGPT.lnk'),
-    [string]$AppTarget = 'shell:AppsFolder\OpenAI.Codex_2p2nqsd0c76g0!App',
+    [string]$AppTarget,
     [switch]$Remove
 )
 $ErrorActionPreference = 'Stop'
@@ -25,6 +25,11 @@ $compiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
 $launcher = Join-Path $directory 'ResetRing.Launcher.exe'
 & $compiler /nologo /target:winexe "/out:$launcher" (Join-Path $installed 'AppLauncher.cs')
 if ($LASTEXITCODE) { throw 'Unable to compile the shortcut launcher.' }
+if (!$AppTarget) {
+    $apps = @(Get-StartApps | Where-Object { $_.Name -in @('ChatGPT', 'Codex') -and $_.AppID -like 'OpenAI.*' })
+    if ($apps.Count -ne 1) { throw 'Supply -AppTarget with the original app shortcut or application path.' }
+    $AppTarget = 'shell:AppsFolder\' + $apps[0].AppID
+}
 [IO.File]::WriteAllLines((Join-Path $directory 'shortcut.txt'), @(
     $AppTarget,
     (Get-Process -Id $PID).Path,
