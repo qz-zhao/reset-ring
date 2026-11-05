@@ -27,6 +27,10 @@ Codex Plus 和存在有效 5 小时额度窗口的账户显示三环，其余情
 | --- | --- |
 | <img src="assets/windows-light-normal.png" width="300" height="236" alt="正常尺寸的 Reset Ring 圆盘"> | <img src="assets/windows-light-hover.png" width="300" height="236" alt="悬停时放大的圆盘与额度提示"> |
 
+## Codex 插件包
+
+仓库也提供 Reset Ring 插件和安装引导 skill。在 Codex 中打开本仓库，通过插件目录或 `/plugins` 查找本地市场中的 `reset-ring`。安装后运行插件设置，配置圆盘和自动启动。桌面应用中的插件发现和安装尚待实测。GitHub 上提供的是插件包，公开插件目录的上架需要单独提交审核。
+
 ## 把这段话发给 AI 安装
 
 复制下面这段话，发给 Codex 或其他能在你电脑上运行命令的 AI 助手。

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "reset-ring",
+  "version": "0.1.0",
+  "description": "Track ChatGPT Codex quota and time until reset with a desktop gauge.",
+  "author": { "name": "qz-zhao" },
+  "homepage": "https://github.com/qz-zhao/reset-ring",
+  "repository": "https://github.com/qz-zhao/reset-ring",
+  "license": "MIT",
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/reset-ring/SKILL.md",
+      "interface": {
+        "displayName": "Reset Ring",
+        "shortDescription": "See quota and time until reset",
+        "longDescription": "Install and manage the Reset Ring desktop gauge for ChatGPT Codex. Windows supports automatic startup through a user login task. macOS includes a menu bar preview.",
+        "developerName": "qz-zhao",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"],
+        "websiteURL": "https://github.com/qz-zhao/reset-ring",
+        "defaultPrompt": ["Set up Reset Ring on this computer.", "Check that Reset Ring starts with ChatGPT."]
+      }
+    }
+  }
+}

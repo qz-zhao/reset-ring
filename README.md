@@ -27,6 +27,10 @@ Codex Plus and accounts with an active five-hour window use three rings. Other a
 | --- | --- |
 | <img src="assets/windows-light-normal.png" width="300" height="236" alt="Reset Ring at its normal size"> | <img src="assets/windows-light-hover.png" width="300" height="236" alt="Expanded Reset Ring with quota and reset details"> |
 
+## Codex plugin package
+
+This repository also contains a Reset Ring plugin with an onboarding skill. Open this repository in Codex and use the Plugins directory or `/plugins` to find `reset-ring` under the local marketplace. After installation, run the plugin setup to configure the desktop gauge and automatic startup. The plugin directory entry has not yet been tested in the desktop app. Publication to the public plugin catalog is separate from this GitHub package.
+
 ## Ask AI to install Reset Ring
 
 Paste this into Codex or another AI assistant that can run commands on your computer.

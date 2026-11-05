@@ -1,0 +1,10 @@
+{
+  "name": "reset-ring-local",
+  "plugins": [
+    {
+      "name": "reset-ring",
+      "source": { "source": "local", "path": "./" },
+      "policy": { "installation": "AVAILABLE" }
+    }
+  ]
+}
