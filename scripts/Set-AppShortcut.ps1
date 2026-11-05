@@ -30,10 +30,13 @@ if (!$AppTarget) {
     if ($apps.Count -ne 1) { throw 'Supply -AppTarget with the original app shortcut or application path.' }
     $AppTarget = 'shell:AppsFolder\' + $apps[0].AppID
 }
+$codex = Get-Command codex.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+if (!$codex) { throw 'Install or locate Codex CLI before configuring the shortcut.' }
 [IO.File]::WriteAllLines((Join-Path $directory 'shortcut.txt'), @(
     $AppTarget,
     (Get-Process -Id $PID).Path,
-    (Join-Path $installed 'Show-Quota.ps1')
+    (Join-Path $installed 'Show-Quota.ps1'),
+    $codex.Source
 ))
 $shell = New-Object -ComObject WScript.Shell
 $link = $shell.CreateShortcut($ShortcutPath)
