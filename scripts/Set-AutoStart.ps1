@@ -8,6 +8,10 @@ if ($Remove) {
     [IO.File]::Delete($enabled)
     if ($IsWindows) {
         [IO.File]::Delete((Join-Path ([Environment]::GetFolderPath('Startup')) 'Reset Ring.lnk'))
+        if (Get-ScheduledTask -TaskName 'Reset Ring' -ErrorAction SilentlyContinue) {
+            Stop-ScheduledTask -TaskName 'Reset Ring'
+            Unregister-ScheduledTask -TaskName 'Reset Ring' -Confirm:$false
+        }
     } else {
         $plist = Join-Path $HOME "Library/LaunchAgents/$label.plist"
         & /bin/launchctl bootout "gui/$(/usr/bin/id -u)/$label" 2>$null
@@ -31,13 +35,15 @@ if (!$codex) { throw 'Codex CLI was not found. Install it before enabling automa
 $watcher = Join-Path $installed 'Watch-Codex.ps1'
 $pwsh = (Get-Process -Id $PID).Path
 if ($IsWindows) {
-    $shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut(
-        (Join-Path ([Environment]::GetFolderPath('Startup')) 'Reset Ring.lnk'))
-    $shortcut.TargetPath = $pwsh
-    $shortcut.Arguments = '-NoProfile -WindowStyle Hidden -File "' + $watcher + '"'
-    $shortcut.WindowStyle = 7
-    $shortcut.Save()
-    Start-Process $pwsh -ArgumentList ('-NoProfile -WindowStyle Hidden -File "' + $watcher + '"') -WindowStyle Hidden
+    $user = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    $action = New-ScheduledTaskAction -Execute $pwsh -Argument ('-NoProfile -WindowStyle Hidden -File "' + $watcher + '"')
+    $trigger = New-ScheduledTaskTrigger -AtLogOn -User $user
+    $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
+    $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([TimeSpan]::Zero) -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew
+    $task = New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings
+    Register-ScheduledTask -TaskName 'Reset Ring' -InputObject $task -Force | Out-Null
+    [IO.File]::Delete((Join-Path ([Environment]::GetFolderPath('Startup')) 'Reset Ring.lnk'))
+    Start-ScheduledTask -TaskName 'Reset Ring'
 } else {
     $plist = Join-Path $HOME "Library/LaunchAgents/$label.plist"
     $null = [IO.Directory]::CreateDirectory((Split-Path $plist))
