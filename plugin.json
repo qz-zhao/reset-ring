@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "reset-ring",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Track ChatGPT Codex quota and time until reset with a desktop gauge.",
   "author": { "name": "qz-zhao" },
   "homepage": "https://github.com/qz-zhao/reset-ring",
