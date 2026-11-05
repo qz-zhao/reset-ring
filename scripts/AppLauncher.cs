@@ -21,12 +21,14 @@ internal static class AppLauncher
         }
         try
         {
-            Process.Start(new ProcessStartInfo(settings[1],
+            var overlay = new ProcessStartInfo(settings[1],
                 "-NoProfile -STA -WindowStyle Hidden -File \"" + settings[2] + "\"")
             {
                 UseShellExecute = false,
                 CreateNoWindow = true
-            });
+            };
+            if (settings.Length > 3) overlay.EnvironmentVariables["RESET_RING_CODEX_EXE"] = settings[3];
+            Process.Start(overlay);
         }
         catch (Exception error)
         {
