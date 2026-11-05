@@ -34,7 +34,7 @@ Paste this into Codex or another AI assistant that can run commands on your comp
 ```text
 Please install Reset Ring from https://github.com/qz-zhao/reset-ring.
 Read the README, detect whether I use Windows or macOS, and follow the steps for my system.
-Install it as the $reset-ring skill for ChatGPT Codex.
+Install it as the $reset-ring skill for ChatGPT Codex. On Windows, also run Set-AppShortcut.ps1 so the desktop ChatGPT shortcut starts the gauge with the app.
 Start the gauge and verify that it can read my quota. Tell me if I need to sign in or grant access.
 ```
 
@@ -98,4 +98,3 @@ Codex data comes from the local Codex App Server under your current sign-in. Res
 ## License
 
 [MIT](LICENSE)
-
