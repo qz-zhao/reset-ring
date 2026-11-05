@@ -47,15 +47,13 @@ Codex Plus 和存在有效 5 小时额度窗口的账户显示三环，其余情
 
 ## 随桌面应用自动启动
 
-运行一次下面的命令。之后登录电脑时，Reset Ring 会在后台待命，打开 Codex 或 ChatGPT 桌面应用后约五秒内自动启动圆盘，退出应用后停止圆盘。更新 Reset Ring 后，重新运行安装命令即可更新已安装的文件。
+Windows 可生成桌面快捷方式，先打开 ChatGPT，再在后台启动圆盘。启动器随即退出。更新后重新运行安装命令，之后使用生成的 **ChatGPT** 快捷方式。
 
 ```powershell
 
-pwsh -NoProfile -File scripts/Set-AutoStart.ps1
+pwsh -NoProfile -File scripts/Set-AppShortcut.ps1
 
 ```
-
-取消自动启动时，在同一命令后加上 `-Remove`。
 
 ## Windows 启动
 
@@ -100,3 +98,4 @@ Codex 额度通过本机 Codex App Server 读取，重置时刻按系统时区�
 ## 许可证
 
 [MIT](LICENSE)
+

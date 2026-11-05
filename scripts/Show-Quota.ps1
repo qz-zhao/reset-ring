@@ -44,6 +44,12 @@ function Get-CodexLocale([string]$configPath) {
     [Globalization.CultureInfo]::CurrentUICulture.Name
 }
 
+$overlayMutex = $null
+if ($IsWindows -and !$Probe -and !$SnapshotJson) {
+    $overlayMutex = [Threading.Mutex]::new($false, 'Local\ResetRing.Overlay')
+    try { $acquired = $overlayMutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $acquired = $true }
+    if (!$acquired) { $overlayMutex.Dispose(); return }
+}
 $server = $null
 try {
     $Demo = $Demo -or $DemoPlus
@@ -485,6 +491,7 @@ public static class OverlayWindow {
     $timer.Start()
     [Windows.Threading.Dispatcher]::Run()
 } finally {
+    if ($overlayMutex) { $overlayMutex.ReleaseMutex(); $overlayMutex.Dispose() }
     if ($timer) { $timer.Stop() }
     if ($server) {
         if (!$server.HasExited) { $server.Kill() }

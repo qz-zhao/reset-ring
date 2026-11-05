@@ -47,15 +47,13 @@ Start the gauge and verify that it can read my quota. Tell me if I need to sign 
 
 ## Start automatically
 
-Run the following once. Reset Ring will wait in the background after you sign in, start within five seconds of opening Codex or ChatGPT desktop, and stop the gauge when the desktop app exits. Re-run the installer after updating Reset Ring to refresh the installed files.
+On Windows, create a desktop shortcut that opens ChatGPT first, then starts Reset Ring in the background. The launcher exits immediately. Re-run this installer after updating Reset Ring. Use the generated **ChatGPT** shortcut.
 
 ```powershell
 
-pwsh -NoProfile -File scripts/Set-AutoStart.ps1
+pwsh -NoProfile -File scripts/Set-AppShortcut.ps1
 
 ```
-
-To disable automatic startup, run the same command with `-Remove`.
 
 ## Run on Windows
 
@@ -100,3 +98,4 @@ Codex data comes from the local Codex App Server under your current sign-in. Res
 ## License
 
 [MIT](LICENSE)
+
